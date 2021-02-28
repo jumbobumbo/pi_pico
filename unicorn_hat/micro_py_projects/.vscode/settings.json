@@ -1,11 +1,28 @@
 {
     "python.linting.enabled": true,
     "python.analysis.typeshedPaths": [
-        ".vscode/Pico-Stub"
+        ".micropy/micropy-cli/frozen",
+        ".micropy/BradenM-micropy-stubs-e1b8ce6/frozen",
+        ".micropy/micropy-cli/stubs",
+        ".micropy/screen_dance"
     ],
     "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.extraPaths": [
         ".vscode/Pico-Stub/stubs"
-    ]
+    ],
+    "python.jediEnabled": false,
+    "python.autoComplete.extraPaths": [
+        ".micropy/micropy-cli/frozen",
+        ".micropy/BradenM-micropy-stubs-e1b8ce6/frozen",
+        ".micropy/micropy-cli/stubs",
+        ".micropy/screen_dance"
+    ],
+    "python.autoComplete.typeshedPaths": [
+        ".micropy/micropy-cli/frozen",
+        ".micropy/BradenM-micropy-stubs-e1b8ce6/frozen",
+        ".micropy/micropy-cli/stubs",
+        ".micropy/screen_dance"
+    ],
+    "python.linting.pylintEnabled": true
 }
