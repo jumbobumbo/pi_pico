@@ -3,7 +3,7 @@ from utime import sleep
 import picounicorn
 
 
-def start_up(init=True):
+def start_up():
     print('....initialising....')
     picounicorn.init()
 
