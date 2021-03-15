@@ -11,6 +11,8 @@ class Skies:
     night_base = [32, 32, 32]
     moon_rgb = [211, 211, 211]
     moon_crater_rgb = [47, 79, 79]
+    star_rgb = [162, 185, 255]
+    dark_sea_rgb = [0, 0, 139]
 
     def __init__(self):
         self.setup()
@@ -46,10 +48,16 @@ class Skies:
         day_base = (22, 113, 153)
         night_base = (0, 0, 0)
 
-    def _paint(self, *args, randomise=False, start_row=0, start_px=0, log=False):
+    def _paint(self, *args, randomise=False, start_row=0, end_row=None, start_px=0, log=False):
         """Sets the screen to one colour - add a better doc string"""
         updated_pixels = {}
-        for index, row in enumerate(range(start_row, self.width)):
+        if not end_row:
+            end_row = self.width
+
+        if not isinstance(end_row, int):
+            raise TypeError('end_row must be an int or None')
+
+        for index, row in enumerate(range(start_row, end_row)):
             updated_pixels[row] = []
             for px in range(start_px, self.height):
                 if randomise:
@@ -115,11 +123,12 @@ class Skies:
     def _night_sky(self, rgb=night_base):
         """Gens the night sky"""
         self._paint(*rgb)
-        self._paint(*[162, 185, 255], randomise=True)  # add stars
+        stars = self._paint(*self.star_rgb, randomise=True, log=True)  # add stars
+        self._paint(*self.dark_sea_rgb, end_row=1)  # add the sea
         self._add_sky_object(vals=self.moon)  # add the moon
 
 if __name__ == "__main__":
     sky = Skies()
-    for _ in range(0, 10):
+    for _ in range(0, 2):
         sky.set_night()
         sleep(5)
