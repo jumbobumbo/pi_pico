@@ -8,10 +8,23 @@ import picounicorn
 
 class Skies:
 
+    night_base = [32, 32, 32]
+    moon_rgb = [211, 211, 211]
+    moon_crater_rgb = [47, 79, 79]
+
     def __init__(self):
         self.setup()
         self.width = picounicorn.get_width()
         self.height = picounicorn.get_height()
+        self.moon = {
+            15: {"0-1": self.night_base, "2-3": self.moon_rgb, "4-5": self.night_base},
+            14: {"0": self.night_base, "1-4": self.moon_rgb, "5": self.night_base},
+            13: {"0-3": self.moon_rgb, "4": self.moon_crater_rgb, "5": self.moon_rgb, "6": self.night_base},
+            12: {"0-2": self.moon_rgb, "3-4": self.moon_crater_rgb, "5": self.moon_rgb, "6": self.night_base},
+            11: {"0": self.night_base, "1-2": self.moon_rgb, "3": self.moon_crater_rgb, "4": self.moon_rgb, "5": self.night_base},
+            10: {"0-1": self.night_base, "2-3": self.moon_rgb, "4-5": self.night_base},
+            9: {"2-3": self.night_base}
+        }
 
     def setup(self):
         print('....initialising....')
@@ -32,14 +45,6 @@ class Skies:
         """
         day_base = (22, 113, 153)
         night_base = (0, 0, 0)
-        # for row in range(0, self.width):
-        #     for px in range(0, self.height):
-        #         if daytime:
-        #             x, y, z = day_base[0], day_base[1], day_base[2]
-        #         else:
-        #             x, y, z = night_base[0], night_base[1], night_base[2]
-
-        #         picounicorn.set_pixel(row, px, x, y, z)
 
     def _paint(self, *args, randomise=False, start_row=0, start_px=0, log=False):
         """Sets the screen to one colour - add a better doc string"""
@@ -83,13 +88,35 @@ class Skies:
         :param dict vals: {row_num: {px: [R, G, B]}}
 
         """
-        pass
+        for row, px_data in vals.items():
+            for pxs, rgb in px_data.items():
+                try:
 
-    def _night_sky(self, rgb=[0, 0, 0]):
+                    update_pixels = pxs.split("-")
+
+                except SyntaxError as ex:
+                    print("%s thrown. Key should be a string" % ex)
+                    update_pixels = str(pxs).split("-")
+
+                for i in update_pixels:
+                    if not i.isdigit():
+                        print("Pixel keys must be digits, not '%s. Skipping row!" % i)
+                        continue
+
+                update_pixels_len = len(update_pixels)
+                if update_pixels_len == 1:
+                    picounicorn.set_pixel(row, int(update_pixels[0]), *rgb)
+                elif update_pixels_len == 2:
+                    for p in range(int(update_pixels[0]), int(update_pixels[1]) + 1):
+                        picounicorn.set_pixel(row, p, *rgb)
+                else:
+                    print('Unexpected key format: %s. Please use values like: "1" or "1-4"' % pxs)
+
+    def _night_sky(self, rgb=night_base):
         """Gens the night sky"""
         self._paint(*rgb)
-        self._paint(*[100, 100, 100], randomise=True)  # add stars
-
+        self._paint(*[162, 185, 255], randomise=True)  # add stars
+        self._add_sky_object(vals=self.moon)  # add the moon
 
 if __name__ == "__main__":
     sky = Skies()
