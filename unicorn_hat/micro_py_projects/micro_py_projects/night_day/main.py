@@ -41,46 +41,54 @@ class Skies:
 
         #         picounicorn.set_pixel(row, px, x, y, z)
 
-    def _paint(self, *args, randomise=False, start_row=0, start_px=0):
+    def _paint(self, *args, randomise=False, start_row=0, start_px=0, log=False):
         """Sets the screen to one colour - add a better doc string"""
         updated_pixels = {}
-        for row in range(start_row, self.width):
+        for index, row in enumerate(range(start_row, self.width)):
             updated_pixels[row] = []
             for px in range(start_px, self.height):
                 if randomise:
-                    if randint(0, 4) != randint(0, 4):
+                    if randint(0, 3) != 1:
                         continue
 
                     try:
 
                         within_1 = next((x for x in updated_pixels[row] if abs(x - px) < 2))
 
-                    except StopIteration:
+                    except StopIteration:  # micropython things...
                         within_1 = None
 
-                    try:
-
+                    if index == 0:
+                        previous_row = []
+                    else:
                         previous_row = updated_pixels[row - 1]
 
-                    except KeyError:
-                        previous_row = []
-
-                    if any([within_1 is not None, px in previous_row]):
+                    if any([within_1 is not None, px in previous_row]):  # Truthy Falsey
                         continue
 
-                    updated_pixels[row].append(px)
-
+                updated_pixels[row].append(px)
                 picounicorn.set_pixel(row, px, *args)
+
+            if log:
+                print("Pixels updated on last row: %s" % updated_pixels[row])
+
+        if log:
+            print("--- All updated pixels ---\n", updated_pixels)
+
+        return updated_pixels
+
+    def _add_sky_object(self, vals):
+        """Adds an object into the sky (sun, moon, clouds, etc)
+
+        :param dict vals: {row_num: {px: [R, G, B]}}
+
+        """
+        pass
 
     def _night_sky(self, rgb=[0, 0, 0]):
         """Gens the night sky"""
-
-        def _rand_stars():
-            """Adds the stars"""
-            pass
-
         self._paint(*rgb)
-        self._paint(*[100, 100, 100], randomise=True)
+        self._paint(*[100, 100, 100], randomise=True)  # add stars
 
 
 if __name__ == "__main__":
